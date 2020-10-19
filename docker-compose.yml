@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres
+    container_name: postgres-develop
+    ports:
+      - "8001:5432"
+    env_file:
+      - "infra/develop.env"
+    volumes: 
+      - "../postgres:/var/lib/postgresql/data"
+      - "../postgres-backup:/backup"
+    networks: 
+      - postgres-network
+
+  node:
+    image: fghinzelli/node
+    env_file: 
+      - "infra/develop.env"
+    volumes:
+      - ".:/usr/src/app"
+    networks: 
+      - postgres-network  
+    ports:
+      - "3000:3000"
+    command: 
+      - "npm install && npm start"
+
+networks: 
+  postgres-network:
+    driver: bridge
